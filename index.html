@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <title>Запросеки</title>
+   <link rel="stylesheet" href="./style.css">
+   <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+</head>
+<body>
+   <section>
+      <div class="form_wrap">
+         <form id="form" >
+            <label> Id пользователя: 
+               <input id="userId" type="text" placeholder="20455878" required >
+            </label>
+            <label> TokenVK: 
+                  <input id="token" type="text" placeholder="" required >
+            </label>
+            <span> Фильтр</span>
+            <select name="admin_level" id="admin_level">
+               <option value="admin">Админ</option>
+               <option value="editor">Редактор</option>
+               <option value="moder">Модератор</option>
+               <option value="">Все группы</option>
+            </select>
+            
+            <div class="buttons">
+               <button id="send">
+                  Тык
+               </button>
+               <button id="clear">
+                  Очистить список
+               </button>
+            </div>
+            
+         </form>
+      </div>
+   
+      <div class="group_list_wrap">
+        
+      </div>
+   </section>
+   
+
+   <script type="text/javascript" src="main.js" defer></script>
+</body>
+</html>
+
+
