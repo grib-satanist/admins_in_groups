@@ -5,44 +5,39 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <meta http-equiv="X-UA-Compatible" content="ie=edge">
    <title>Запросеки</title>
-   <link rel="stylesheet" href="./style.css">
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 </head>
 <body>
-   <section>
-      <div class="form_wrap">
-         <form id="form" >
-            <label> Id пользователя: 
-               <input id="userId" type="text" placeholder="20455878" required >
-            </label>
-            <label> TokenVK: 
-                  <input id="token" type="text" placeholder="" required >
-            </label>
-            <span> Фильтр</span>
-            <select name="admin_level" id="admin_level">
-               <option value="admin">Админ</option>
-               <option value="editor">Редактор</option>
-               <option value="moder">Модератор</option>
-               <option value="">Все группы</option>
-            </select>
-            
-            <div class="buttons">
-               <button id="send">
-                  Тык
-               </button>
-               <button id="clear">
-                  Очистить список
-               </button>
-            </div>
-            
-         </form>
-      </div>
-   
-      <div class="group_list_wrap">
-        
-      </div>
-   </section>
-   
+   <div class="container-sm mt-5">
+      <form id="form" class="row justify-content-center needs-validation">
+         <div class="col-lg-8 col-sm-12">
+            <div class="input-group mb-3">
+               <span class="input-group-text" id="basic-addon1">User id</span>
+               <input id="userId" type="text" class="form-control" placeholder="28455878" required>
+               <div class="invalid-feedback">Введите id пользователя</div>
+             </div>
+             <div class="input-group mb-3">
+               <span class="input-group-text" id="basic-addon1">Token VK</span>
+               <input id="token" type="password" class="form-control" placeholder="65468552e15cc0c7f26aa4109fa5110532f71963cc78a68119b3ec9950d14f17b7a35ba120e64c" required>
+               <div class="invalid-feedback">Введите токен VK</div>
+             </div>
+             <div class="col-auto">
+               <div class="input-group">
+                  <select class="form-select" id="admin_level">
+                     <option selected value="">Все группы</option>
+                     <option value="admin">Где админ</option>
+                     <option value="editor">Где редактор</option>
+                     <option value="moder">Где модератор</option>
+                  </select>
+                  <button class="btn btn-outline-primary" id="send" type="button">Получить список</button>
+                  <button class="btn btn-outline-danger" id="clear" type="button" disabled>Очистить список</button>
+               </div>
+             </div>
+             <div class="group_list_wrap mt-3"></div>
+         </div>
+      </form>
+   </div>
 
    <script type="text/javascript" src="main.js" defer></script>
 </body>

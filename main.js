@@ -1,16 +1,9 @@
 
 let btnSend = document.getElementById('send'),
+   form = document.querySelector('.needs-validation'),
    btnClear =  document.getElementById('clear'),
-   form =  document.getElementById('form'),
-   userLink = document.getElementById('user_link'),
    content = document.querySelector('.group_list_wrap'),
    jsonVK = '';
-
-
-/** 
- * ? объект с методами для запроса 
- * ? В methodName указываем метод который хотим использовать, в properties прописываем дополнительные
- * ? параметры как в примере (ключ значение) */ 
 
 let methodObject = {
    methodName: "groups.get",
@@ -18,13 +11,9 @@ let methodObject = {
       user_ids: '',
       filter: '',
       access_token: ''
-
    }
-
 }
 
-/** 
- * ? Функция для составления запроса */
 
 const urlRequest = (options) => {
    let url = "https://api.vk.com/method/";
@@ -32,18 +21,15 @@ const urlRequest = (options) => {
    url += options["methodName"] + "?";
 
    for (item in options.properties) {
-      
       url += item + "=" + options.properties[item] + "&";
-
    }
 
    url += "v=5.103&extended=1";
-  
    return url;
 }
 
-const messagesSearch = () => {
-   let testPromise = new Promise((resolve, reject) => {
+const groupsSearch = () => {
+   let requstPromise = new Promise((resolve, reject) => {
       
       $.ajax({
          url: urlRequest(methodObject),
@@ -58,66 +44,73 @@ const messagesSearch = () => {
                console.log("Первый запрос - ok");
                
                console.log("Группы: ", jsonVK.items);
-
-               content.innerHTML += `
-               <h3>Пользователь:
+               let html = `
+               <h4>Пользователь:
                   <span>
-                     <a id="user_link" href="https://vk.com/id${userId}">https://vk.com/id${userId}</a>
+                     <a id="user_link" href="https://vk.com/id${methodObject.properties.user_ids}">https://vk.com/id${methodObject.properties.user_ids}</a>
                   </span>
-               </h3>`;
+               </h4>`;
+               content.insertAdjacentHTML('afterbegin', html); 
 
                resolve();
+               console.log(methodObject.properties.user_ids);
             }
          }
       });
-});
+   });
 
-testPromise.then (() => {
-   return new Promise((resolve, reject) => {
-      let adminLevelArr = ['Модератор', 'Редактор','Администратор'];
+   requstPromise.then (() => {
+      return new Promise((resolve, reject) => {
+         let adminLevelArr = ['Модератор', 'Редактор','Администратор'];
 
-      content.innerHTML += `
-               <h3>Список групп:</h3>
-              `;
-      let groupsArray = jsonVK.items;
-
-      groupsArray.forEach((item) => {
-
-         content.innerHTML += `
-         <li> <b>${adminLevelArr[item.admin_level - 1] ? adminLevelArr[item.admin_level - 1] : "Нет прав"} </b> в группе:  <b>"${item.name}"</b> 
-            <a id="group_link" href="https://vk.com/${item.screen_name}">( https://vk.com/${item.screen_name} )</a>
-         </li>`;
+         content.insertAdjacentHTML('beforeend', `<h4>Список групп:</h4>`);
+         let groupsArray = jsonVK.items;
+         groupsArray.forEach((item) => {
+            let html = `
+               <li> <b>${adminLevelArr[item.admin_level - 1] ? adminLevelArr[item.admin_level - 1] : "Нет прав"} </b> в группе:  <b>"${item.name}"</b> 
+                  <a id="group_link" href="https://vk.com/${item.screen_name}">( https://vk.com/${item.screen_name} )</a>
+               </li>
+            `;
+            content.insertAdjacentHTML('beforeend', html);
+            btnClear.removeAttribute('disabled');
+         })
       })
    })
-})
 
-.catch((e) => {
-   console.error( "Ошибка сэр: " + e.error_msg);
-   console.log(e);
-})
-
+   .catch((e) => {
+      console.error( "Ошибка сэр: ", e);
+      let html = `<h5 style="color: tomato;">При запросе возникла ошибка: ${e.error_msg}</h5>
+                  <span>URL запроса: ${urlRequest(methodObject)}</span>
+                  `
+      content.insertAdjacentHTML('afterbegin', html);
+      btnClear.removeAttribute('disabled');
+   })
 }
 
+btnSend.addEventListener("click", event => {
 
-btnSend.addEventListener("click", el => {
-   if (form.checkValidity()) {
+   if (!form.checkValidity()) {
+      event.preventDefault()
+      event.stopPropagation()
+      form.classList.add('was-validated')
+   } else {
       let = tokenVk = document.getElementById('token').value,
-         userId = document.getElementById('userId').value;
+         userId = document.getElementById('userId').value,
          adminLevel = document.getElementById('admin_level').value;
 
-      methodObject.properties.user_ids = userId.trim().replace(/'|"/gm, "");
+      methodObject.properties.user_ids = userId.match(/\d+/)[0];
       methodObject.properties.access_token = tokenVk.trim().replace(/'|"/gm, "");
-      methodObject.properties.filter = adminLevel.trim(); 
+      methodObject.properties.filter = adminLevel;
 
       console.log(methodObject);
-      messagesSearch();
-    }
-   el.preventDefault();
+      groupsSearch();
+   }
 });
 
 btnClear.addEventListener("click", el => {
-   content.innerHTML = "";
    el.preventDefault();
+   content.innerHTML = "";
+   btnClear.setAttribute('disabled', '');
 });
 
 
