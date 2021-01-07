@@ -14,6 +14,11 @@ let methodObject = {
    }
 }
 
+const customAdminLevel = {
+   'admin': 3,
+   'moder': 1,
+   'editor': 2
+}
 
 const urlRequest = (options) => {
    let url = "https://api.vk.com/method/";
@@ -28,7 +33,7 @@ const urlRequest = (options) => {
    return url;
 }
 
-const groupsSearch = () => {
+const groupsSearch = (adminLevel) => {
    let requstPromise = new Promise((resolve, reject) => {
       
       $.ajax({
@@ -45,12 +50,13 @@ const groupsSearch = () => {
                
                console.log("Группы: ", jsonVK.items);
                let html = `
-               <h4>Пользователь:
+               <hr>
+               <h4 mt-5>Пользователь:
                   <span>
                      <a id="user_link" href="https://vk.com/id${methodObject.properties.user_ids}">https://vk.com/id${methodObject.properties.user_ids}</a>
                   </span>
                </h4>`;
-               content.insertAdjacentHTML('afterbegin', html); 
+               content.insertAdjacentHTML('beforeend', html); 
 
                resolve();
                console.log(methodObject.properties.user_ids);
@@ -65,6 +71,16 @@ const groupsSearch = () => {
 
          content.insertAdjacentHTML('beforeend', `<h4>Список групп:</h4>`);
          let groupsArray = jsonVK.items;
+
+         if (adminLevel !== '') {
+            groupsArray = groupsArray.filter(gr => gr.admin_level === customAdminLevel[adminLevel] )
+         }
+
+         if (groupsArray.length === 0) {
+            content.insertAdjacentHTML('beforeend', `<strong style="color: tomato;"> Нет групп с такими правами<strong/>`);
+            return
+         }
+
          groupsArray.forEach((item) => {
             let html = `
                <li> <b>${adminLevelArr[item.admin_level - 1] ? adminLevelArr[item.admin_level - 1] : "Нет прав"} </b> в группе:  <b>"${item.name}"</b> 
@@ -103,7 +119,7 @@ btnSend.addEventListener("click", event => {
       methodObject.properties.filter = adminLevel;
 
       console.log(methodObject);
-      groupsSearch();
+      groupsSearch(adminLevel);
    }
 });
 
