@@ -59,6 +59,7 @@ const groupsSearch = (adminLevel) => {
                   </span>
                </h4>`;
                content.insertAdjacentHTML('beforeend', html); 
+               btnClear.removeAttribute('disabled');
 
                resolve();
             }
@@ -89,7 +90,6 @@ const groupsSearch = (adminLevel) => {
                </li>
             `;
             content.insertAdjacentHTML('beforeend', html);
-            btnClear.removeAttribute('disabled');
          })
       })
    })
@@ -97,7 +97,8 @@ const groupsSearch = (adminLevel) => {
    .catch((e) => {
       console.error( "Ошибка сэр: ", e);
       let html = `<h5 style="color: tomato;">При запросе возникла ошибка: ${e.error_msg}</h5>
-                  <span>URL запроса: ${urlRequest(methodObject)}</span>
+                  <p>URL запроса:</p>
+                  <p>${urlRequest(methodObject)}</p>
                   `
       content.insertAdjacentHTML('afterbegin', html);
       btnClear.removeAttribute('disabled');
@@ -107,15 +108,21 @@ const groupsSearch = (adminLevel) => {
 btnSend.addEventListener("click", event => {
 
    if (!form.checkValidity()) {
-      event.preventDefault()
-      event.stopPropagation()
-      form.classList.add('was-validated')
+      event.preventDefault();
+      event.stopPropagation();
+      form.classList.add('was-validated');
    } else {
-      let = tokenVk = document.getElementById('token').value,
-         userId = document.getElementById('userId').value,
+      var tokenVk = document.getElementById('token').value,
+         getUserId = document.getElementById('userId'),
          adminLevel = document.getElementById('admin_level').value;
+         userId = getUserId.value.match(/\d+/);
 
-      methodObject.properties.user_ids = userId.match(/\d+/)[0];
+      if (userId === null) {
+         getUserId.value = '';
+         return form.classList.add('was-validated');
+      }
+
+      methodObject.properties.user_ids = userId[0];
       methodObject.properties.access_token = tokenVk.trim().replace(/'|"/gm, "");
       methodObject.properties.filter = adminLevel;
 
