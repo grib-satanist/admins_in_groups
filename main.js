@@ -29,11 +29,13 @@ const urlRequest = (options) => {
       url += item + "=" + options.properties[item] + "&";
    }
 
-   url += "v=5.103&extended=1";
+   url += "v=5.126&extended=1";
    return url;
 }
 
 const groupsSearch = (adminLevel) => {
+   console.log('URL запроса',urlRequest(methodObject));
+
    let requstPromise = new Promise((resolve, reject) => {
       
       $.ajax({
@@ -46,9 +48,9 @@ const groupsSearch = (adminLevel) => {
                reject(data.error);
             } else {
                jsonVK = data.response;
-               console.log("Первый запрос - ok");
-               
-               console.log("Группы: ", jsonVK.items);
+               console.log("Запрос - ok");
+               console.log("Полученные группы: ", jsonVK.items);
+
                let html = `
                <hr>
                <h4 mt-5>Пользователь:
@@ -59,7 +61,6 @@ const groupsSearch = (adminLevel) => {
                content.insertAdjacentHTML('beforeend', html); 
 
                resolve();
-               console.log(methodObject.properties.user_ids);
             }
          }
       });
@@ -69,9 +70,9 @@ const groupsSearch = (adminLevel) => {
       return new Promise((resolve, reject) => {
          let adminLevelArr = ['Модератор', 'Редактор','Администратор'];
 
-         content.insertAdjacentHTML('beforeend', `<h4>Список групп:</h4>`);
+         content.insertAdjacentHTML('beforeend', `<h4>Список групп (${methodObject.properties.filter}):</h4>`);
          let groupsArray = jsonVK.items;
-
+         
          if (adminLevel !== '') {
             groupsArray = groupsArray.filter(gr => gr.admin_level === customAdminLevel[adminLevel] )
          }
