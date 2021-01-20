@@ -126,7 +126,6 @@ btnSend.addEventListener("click", event => {
       methodObject.properties.access_token = tokenVk.trim().replace(/'|"/gm, "");
       methodObject.properties.filter = adminLevel;
 
-      console.log(methodObject);
       groupsSearch(adminLevel);
    }
 });
