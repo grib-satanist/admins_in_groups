@@ -1,11 +1,11 @@
 
-let btnSend = document.getElementById('send'),
+const btnSend = document.getElementById('send'),
    form = document.querySelector('.needs-validation'),
    btnClear =  document.getElementById('clear'),
-   content = document.querySelector('.group_list_wrap'),
-   jsonVK = '';
+   content = document.querySelector('.group_list_wrap');
+var jsonVK = '';
 
-let methodObject = {
+const methodObject = {
    methodName: "groups.get",
    properties: {
       user_ids: '',
@@ -20,24 +20,22 @@ const customAdminLevel = {
    'editor': 2
 }
 
-const urlRequest = (options) => {
+const urlRequest = (obj) => {
    let url = "https://api.vk.com/method/";
+   url += obj["methodName"] + "?";
 
-   url += options["methodName"] + "?";
-
-   for (item in options.properties) {
-      url += item + "=" + options.properties[item] + "&";
-   }
+   Object.keys(obj.properties).forEach((item) => {
+      url += item + "=" + obj.properties[item] + "&";
+   })
 
    url += "v=5.126&extended=1";
    return url;
 }
 
 const groupsSearch = (adminLevel) => {
-   console.log('URL запроса',urlRequest(methodObject));
+   console.log('URL запроса', urlRequest(methodObject));
 
    let requstPromise = new Promise((resolve, reject) => {
-      
       $.ajax({
          url: urlRequest(methodObject),
          method: "POST",
@@ -68,10 +66,11 @@ const groupsSearch = (adminLevel) => {
    });
 
    requstPromise.then (() => {
-      return new Promise((resolve, reject) => {
+      return new Promise(() => {
          let adminLevelArr = ['Модератор', 'Редактор','Администратор'];
 
-         content.insertAdjacentHTML('beforeend', `<h4>Список групп (${methodObject.properties.filter}):</h4>`);
+         content.insertAdjacentHTML('beforeend', `
+            <h4>Список групп (${methodObject.properties.filter}):</h4>`);
          let groupsArray = jsonVK.items;
          
          if (adminLevel !== '') {
@@ -85,8 +84,9 @@ const groupsSearch = (adminLevel) => {
 
          groupsArray.forEach((item) => {
             let html = `
-               <li> <b>${adminLevelArr[item.admin_level - 1] ? adminLevelArr[item.admin_level - 1] : "Нет прав"} </b> в группе:  <b>"${item.name}"</b> 
-                  <a id="group_link" href="https://vk.com/${item.screen_name}">( https://vk.com/${item.screen_name} )</a>
+               <li> <b>${adminLevelArr[item.admin_level - 1] ? adminLevelArr[item.admin_level - 1] : "Нет прав"} </b> в группе:  <b>"${item.name}"</b> (
+                  <a id="group_link" href="https://vk.com/${item.screen_name}">https://vk.com/${item.screen_name}</a>
+                  )
                </li>
             `;
             content.insertAdjacentHTML('beforeend', html);
